@@ -1,0 +1,24 @@
+*filter
+:INPUT DROP [2:473]
+:FORWARD ACCEPT [0:0]
+:OUTPUT DROP [0:0]
+
+# Allow loopback
+-A INPUT -i lo -j ACCEPT 
+-A OUTPUT -o lo -j ACCEPT
+
+#allow ssh connections
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --sport 22 -j ACCEPT
+
+#allow hhtp and ftp ports via mulitports
+-A INPUT -p tcp -m multiport --dports 21,80 -m state --state NEW,ESTABLISHED -j ACCEPT
+-A OUTPUT -p tcp -m multiport --sports 20,21,80 -m state --state ESTABLISHED -j ACCEPT
+
+#allow icmp and prevent flooding
+-A INPUT -p icmp -m icmp --icmp-type 8 -m limit --limit 1/min -j ACCEPT
+-A INPUT -p icmp -j DROP
+-A OUTPUT -p icmp -j ACCEPT
+
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+COMMIT
