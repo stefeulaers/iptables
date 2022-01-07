@@ -1,0 +1,20 @@
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT DROP [4:336]
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p tcp --dport 21 -j ACCEPT
+-A INPUT -s DNSServer -p udp -sport 53 -j ACCEPT
+-A INPUT -p icmp -m icmp --icmp-type 8 -m limit --limit 1/min -j ACCEPT
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -j DROP
+-A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 21 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 80 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 443 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 1024 -j ACCEPT
+-A OUTPUT -p udp -m udp --dport 53 -j ACCEPT
+-A OUTPUT -d DNSServer -p udp -dport 53 -j ACCEPT
+-A OUTPUT -p icmp -j ACCEPT
+COMMIT
